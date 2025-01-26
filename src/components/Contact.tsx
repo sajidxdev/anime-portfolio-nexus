@@ -18,6 +18,7 @@ export const Contact = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -26,6 +27,7 @@ export const Contact = () => {
     }));
   };
 
+  // Handle file upload
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -37,8 +39,8 @@ export const Contact = () => {
         });
         return;
       }
-      
-      if (!file.type.startsWith('image/')) {
+
+      if (!file.type.startsWith("image/")) {
         toast({
           title: "Invalid file type",
           description: "Please select an image file",
@@ -53,6 +55,7 @@ export const Contact = () => {
     }
   };
 
+  // Remove selected file
   const removeFile = () => {
     setSelectedFile(null);
     if (previewUrl) {
@@ -61,25 +64,69 @@ export const Contact = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the form data and file to your backend
-    console.log("Form submitted:", formData);
-    console.log("Reference file:", selectedFile);
-    
-    toast({
-      title: "Message sent!",
-      description: "Thank you for your interest. I'll get back to you soon!",
-    });
-    
-    setFormData({
-      name: "",
-      email: "",
-      projectType: "",
-      message: "",
-      referenceUrl: "",
-    });
-    removeFile();
+
+    // Prepare the message for Telegram
+    const telegramMessage = `
+ *New Request is Submitted*:
+ *Name*: ${formData.name}
+ *Email*: ${formData.email}
+ *Project Type*: ${formData.projectType}
+ *Message*: ${formData.message}
+ *Reference URL*: ${formData.referenceUrl || "N/A"}
+`;
+
+    try {
+      // Telegram Bot Token and Chat ID
+      const TELEGRAM_BOT_TOKEN = "7245826974:AAEgdkxf281AWwJUCJInvkEvzILOBFtfakY";
+      const TELEGRAM_CHAT_ID = "7801976211";
+
+      // Send message to Telegram
+      const response = await fetch(
+        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: telegramMessage,
+            parse_mode: "Markdown",
+          }),
+        }
+      );
+
+      if (response.ok) {
+        toast({
+          title: "Message sent!",
+          description: "Your request has been sent successfully to Telegram.",
+        });
+
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          projectType: "",
+          message: "",
+          referenceUrl: "",
+        });
+        removeFile();
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to send your request. Try again later.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error sending message to Telegram:", error);
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -151,7 +198,7 @@ export const Contact = () => {
                 ) : (
                   <div className="relative mt-2">
                     <img
-                      src={previewUrl || ''}
+                      src={previewUrl || ""}
                       alt="Preview"
                       className="max-h-48 rounded-md"
                     />
