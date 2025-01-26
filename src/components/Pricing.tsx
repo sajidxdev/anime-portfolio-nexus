@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 const packages = [
   {
@@ -39,6 +40,17 @@ const packages = [
 ];
 
 export const Pricing = () => {
+  const { toast } = useToast();
+
+  const handleGetStarted = (packageName: string) => {
+    const contactSection = document.getElementById('contact');
+    contactSection?.scrollIntoView({ behavior: 'smooth' });
+    toast({
+      title: `${packageName} Selected!`,
+      description: "Please fill out the contact form below to get started.",
+    });
+  };
+
   return (
     <section className="py-20 px-4">
       <div className="container mx-auto">
@@ -65,7 +77,12 @@ export const Pricing = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full mt-6">Get Started</Button>
+                  <Button 
+                    className="w-full mt-6"
+                    onClick={() => handleGetStarted(pkg.name)}
+                  >
+                    Get Started
+                  </Button>
                 </CardContent>
               </Card>
             </motion.div>

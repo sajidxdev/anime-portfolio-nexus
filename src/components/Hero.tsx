@@ -1,6 +1,11 @@
 import { motion } from "framer-motion";
 
 export const Hero = () => {
+  const scrollToPortfolio = () => {
+    const portfolioSection = document.getElementById('portfolio');
+    portfolioSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section className="min-h-[80vh] flex flex-col justify-center items-center bg-gradient-to-b from-pastel-purple to-white px-4">
       <motion.div
@@ -16,7 +21,10 @@ export const Hero = () => {
           Bringing your brand to life with unique anime-inspired logos that capture
           the essence of Japanese artistry
         </p>
-        <button className="bg-primary text-white px-8 py-3 rounded-full hover:opacity-90 transition-opacity">
+        <button 
+          onClick={scrollToPortfolio}
+          className="bg-primary text-white px-8 py-3 rounded-full hover:opacity-90 transition-opacity"
+        >
           View My Work
         </button>
       </motion.div>

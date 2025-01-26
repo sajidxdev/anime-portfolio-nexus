@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 const portfolioItems = [
   {
@@ -24,8 +25,19 @@ const portfolioItems = [
 ];
 
 export const Portfolio = () => {
+  const { toast } = useToast();
+
+  const handleRequestWork = () => {
+    const contactSection = document.getElementById('contact');
+    contactSection?.scrollIntoView({ behavior: 'smooth' });
+    toast({
+      title: "Let's discuss your project!",
+      description: "Fill out the form below and I'll get back to you soon.",
+    });
+  };
+
   return (
-    <section className="py-20 px-4">
+    <section className="py-20 px-4" id="portfolio">
       <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center mb-12">My Work</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -54,7 +66,9 @@ export const Portfolio = () => {
           ))}
         </div>
         <div className="text-center mt-12">
-          <Button className="bg-primary text-white">Request Custom Work</Button>
+          <Button onClick={handleRequestWork} className="bg-primary text-white">
+            Request Custom Work
+          </Button>
         </div>
       </div>
     </section>
